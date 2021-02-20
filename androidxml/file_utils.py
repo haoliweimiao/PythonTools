@@ -1,11 +1,55 @@
 #!/usr/bin/env python
 
 # -*- coding: utf-8 -*-
+
+import sys
+sys.path.append("./")
+
+from androidxml.constant import ANDROID_XML_LANGUAGE_INFO_LANGUAGE, ANDROID_XML_LANGUAGE_INFO_MODEL_NAME, ANDROID_XML_LANGUAGE_INFO_TIME, ANDROID_XML_LANGUAGE_INFO_XML_PATH
 import os
 
 # <resources>
 #    <string name="app_name">AndroidDemo</string>
 # </resources>
+
+
+def getOpenMode(isBinary, isRead, isWrite, isTruncate, isInitialPosition):
+    if(isWrite == True and isRead == True):
+        if(isTruncate == True):
+            if(isBinary):
+                return "wb+"
+            else:
+                return "w+"
+        else:
+            if(isInitialPosition == True):
+                if(isBinary):
+                    return "ab+"
+                else:
+                    return "a+"
+            else:
+                if(isBinary):
+                    return "rb+"
+                else:
+                    return "r+"
+
+    if(isRead == True and isWrite == False):
+        if(isBinary):
+            return "rb"
+        else:
+            return "r"
+
+    if(isRead == False and isWrite == True):
+        if(isTruncate):
+            if(isBinary):
+                return "wb"
+            else:
+                return "w"
+        else:
+            if(isBinary):
+                return "ab"
+            else:
+                return "a"
+    return "t"
 
 
 def writeAndroidXmlHead(file):
@@ -80,9 +124,15 @@ def getAndroidLanguageXMLInfo(xmlPath):
     xmlNameSplit = xmlName.split("-")
     if(len(xmlNameSplit) != 5):
         return info
-    
-    for name in xmlNameSplit:
-        print("split name : {0}".format(name))
+
+    info[ANDROID_XML_LANGUAGE_INFO_MODEL_NAME] = xmlNameSplit[0]
+    info[ANDROID_XML_LANGUAGE_INFO_LANGUAGE] = xmlNameSplit[1]
+    info[ANDROID_XML_LANGUAGE_INFO_TIME] = "{0}-{1}-{2}".format(
+        xmlNameSplit[2], xmlNameSplit[3], xmlNameSplit[4])
+    info[ANDROID_XML_LANGUAGE_INFO_XML_PATH] = xmlPath
+
+    # for name in xmlNameSplit:
+    #     print("split name : {0}".format(name))
     return info
 
 # 会死循环
@@ -120,3 +170,6 @@ if __name__ == "__main__":
     searchFile(getNowPath(), files, ".xml")
     for file in files:
         print("find .xml file name:{0}".format(file))
+
+    openMode = getOpenMode(False, True, True, False, True)
+    print("openMode : {0}".format(openMode))
