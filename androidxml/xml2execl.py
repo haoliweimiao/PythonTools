@@ -177,8 +177,10 @@ def readAllXmlFileLanguageToMemory(androidLanguageInfos):
             for node in resource:
                 # 得到名称
                 key = node.getAttribute('name')
-                # 得到对应的值
-                value = node.firstChild.data
+                value = ""
+                if(node.firstChild != None):
+                    # 得到对应的值
+                    value = node.firstChild.data
                 print("name " + key + "\nvalue " + value + "\n")
                 # 将xml中 各个StringID + 值插入 androidLanguageInfos[modelName][language][cacheData][StringID]
                 checkDictKey(dictLanguageCache, key)
